@@ -2,29 +2,6 @@
 @{
   ViewData["Title"] = "الفروع والموظفون";
   var admin = User.IsInRole("Admin");
-  void Slot(Branch b, bool primary)
-  {
-    var e = b.Employees.FirstOrDefault(x => x.IsPrimary == primary);
-    if (e != null)
-    {
-      <div>@e.FullName</div>
-      <div class="muted" dir="ltr" style="text-align:right">@e.Phone</div>
-      <div class="row">
-        <a href="/Branches/Edit/@e.Id">تعديل</a>
-        <form asp-antiforgery="true" method="post" action="/Branches/Delete/@e.Id" onsubmit="return confirm('حذف هذا الموظف من الفرع؟')"><button class="btn del">حذف</button></form>
-      </div>
-    }
-    else
-    {
-      <form asp-antiforgery="true" method="post" action="/Branches/AddEmployee" class="stack">
-        <input type="hidden" name="branchId" value="@b.Id">
-        <input type="hidden" name="isPrimary" value="@(primary ? "true" : "false")">
-        <input name="fullName" placeholder="الاسم" required>
-        <input name="phone" placeholder="الهاتف">
-        <button class="btn alt">إضافة</button>
-      </form>
-    }
-  }
 }
 <h1>الفروع والموظفون (@Model.Count)</h1>
 @if (admin)
@@ -45,8 +22,31 @@ else
   {
     <tr>
       <td>@b.Region.Name</td><td>@b.Name</td>
-      <td>@{ Slot(b, true); }</td>
-      <td>@{ Slot(b, false); }</td>
+      @foreach (var primary in new[] { true, false })
+      {
+        var e = b.Employees.FirstOrDefault(x => x.IsPrimary == primary);
+        <td>
+        @if (e != null)
+        {
+          <div>@e.FullName</div>
+          <div class="muted" dir="ltr" style="text-align:right">@e.Phone</div>
+          <div class="row">
+            <a href="/Branches/Edit/@e.Id">تعديل</a>
+            <form asp-antiforgery="true" method="post" action="/Branches/Delete/@e.Id" onsubmit="return confirm('حذف هذا الموظف من الفرع؟')"><button class="btn del">حذف</button></form>
+          </div>
+        }
+        else
+        {
+          <form asp-antiforgery="true" method="post" action="/Branches/AddEmployee" class="stack">
+            <input type="hidden" name="branchId" value="@b.Id">
+            <input type="hidden" name="isPrimary" value="@(primary ? "true" : "false")">
+            <input name="fullName" placeholder="الاسم" required>
+            <input name="phone" placeholder="الهاتف">
+            <button class="btn alt">إضافة</button>
+          </form>
+        }
+        </td>
+      }
       @if (admin) { <td><form asp-antiforgery="true" method="post" action="/Branches/DeleteBranch/@b.Id" onsubmit="return confirm('حذف الفرع وكل سجلاته نهائياً؟')"><button class="btn del">حذف الفرع</button></form></td> }
     </tr>
   }
