@@ -1,0 +1,24 @@
+@model List<LeaveRecord>
+@{ ViewData["Title"] = "الإجازات"; var today = Ui.Today; }
+<h1>الإجازات</h1>
+<p><a class="btn" href="/Leaves/Create">تسجيل إجازة</a></p>
+<div class="panel">
+@if (!Model.Any()) { <p class="muted">لا توجد إجازات مسجلة. سجّل أول إجازة من الزر أعلاه.</p> }
+else
+{
+<table>
+  <tr><th>الفرع</th><th>الموظف</th><th>من</th><th>إلى</th><th>النوع</th><th>ملاحظة</th><th></th></tr>
+  @foreach (var l in Model)
+  {
+    <tr>
+      <td>@l.Employee.Branch.Name</td>
+      <td>@l.Employee.FullName <span class="muted">(@(l.Employee.IsPrimary ? "أساسي" : "بديل"))</span></td>
+      <td>@l.FromDate.ToString("yyyy-MM-dd")</td>
+      <td>@l.ToDate.ToString("yyyy-MM-dd") @if (l.FromDate <= today && l.ToDate >= today) { <span class="chip warn">جارية</span> }</td>
+      <td>@l.Type</td><td>@l.Notes</td>
+      <td><form method="post" action="/Leaves/Delete/@l.Id" onsubmit="return confirm('حذف هذه الإجازة؟')"><button class="btn del">حذف</button></form></td>
+    </tr>
+  }
+</table>
+}
+</div>

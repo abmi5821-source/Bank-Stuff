@@ -1,0 +1,54 @@
+@model DashVm
+@{
+  ViewData["Title"] = "لوحة المتابعة";
+  var rows = Model.Rows;
+  int Count(string c) => rows.Count(r => r.Coverage == c);
+  void Cell(Employee e, DayStatus s)
+  {
+    if (e == null) { <span class="muted">غير معيّن</span> }
+    else
+    {
+      <a href="/Attendance/Employee/@e.Id">@e.FullName</a>
+      <span class="chip @Ui.Css(s)">@Ui.Label(s)</span>
+      if (!string.IsNullOrEmpty(e.Phone)) { <div class="muted" dir="ltr" style="text-align:right">@e.Phone</div> }
+    }
+  }
+}
+<h1>حالة الفروع ليوم @Model.Date.ToString("yyyy-MM-dd")</h1>
+<form method="get" class="filters">
+  <label>التاريخ <input type="date" name="date" value="@Model.Date.ToString("yyyy-MM-dd")" onchange="this.form.submit()"></label>
+  @if (User.IsInRole("Admin"))
+  {
+    <label>المنطقة
+      <select name="regionId" onchange="this.form.submit()">
+        <option value="">كل المناطق</option>
+        @foreach (var r in Model.Regions) { <option value="@r.Id" selected="@(Model.RegionId == r.Id)">@r.Name</option> }
+      </select>
+    </label>
+  }
+</form>
+<div class="strip">
+  <div class="bad"><strong>@Count("uncovered")</strong>فروع بلا من يغطيها</div>
+  <div class="none"><strong>@Count("pending")</strong>بانتظار التسجيل</div>
+  <div class="info"><strong>@Count("covered")</strong>يغطيها البديل</div>
+  <div class="ok"><strong>@Count("ok")</strong>موظف الارتباط حاضر</div>
+</div>
+<div class="panel">
+@if (!rows.Any()) { <p class="muted">لا توجد فروع مسجلة بعد. @(User.IsInRole("Admin") ? "ابدأ من صفحة استيراد الفروع." : "تواصل مع مسؤول القسم.")</p> }
+else
+{
+<table>
+  <tr><th>المنطقة</th><th>الفرع</th><th>موظف الارتباط</th><th>البديل</th><th>التغطية</th></tr>
+  @foreach (var r in rows)
+  {
+    <tr>
+      <td>@r.Branch.Region.Name</td>
+      <td>@r.Branch.Name</td>
+      <td>@{ Cell(r.Primary, r.PStatus); }</td>
+      <td>@{ Cell(r.Backup, r.BStatus); }</td>
+      <td><span class="chip @Ui.CoverageCss(r.Coverage)">@Ui.CoverageLabel(r.Coverage)</span></td>
+    </tr>
+  }
+</table>
+}
+</div>

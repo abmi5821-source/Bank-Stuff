@@ -1,0 +1,17 @@
+@model List<Branch>
+@{ ViewData["Title"] = "الفروع"; }
+<h1>الفروع (@Model.Count)</h1>
+<div class="panel">
+@if (!Model.Any()) { <p class="muted">لا توجد فروع. استخدم صفحة <a href="/Admin/Import">استيراد الفروع</a>.</p> }
+else
+{
+<table>
+  <tr><th>المنطقة</th><th>الفرع</th><th>موظف الارتباط</th><th>البديل</th></tr>
+  @foreach (var b in Model)
+  {
+    var p = b.Employees.FirstOrDefault(e => e.IsPrimary); var s = b.Employees.FirstOrDefault(e => !e.IsPrimary);
+    <tr><td>@b.Region.Name</td><td>@b.Name</td><td>@(p?.FullName ?? "—")</td><td>@(s?.FullName ?? "—")</td></tr>
+  }
+</table>
+}
+</div>

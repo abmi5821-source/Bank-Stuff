@@ -1,0 +1,22 @@
+@model EmpVm
+@{ ViewData["Title"] = Model.Employee.FullName; }
+<h1>@Model.Employee.FullName</h1>
+<p class="muted">@Model.Employee.Branch.Name — @Model.Employee.Branch.Region.Name — @(Model.Employee.IsPrimary ? "موظف الارتباط" : "البديل")</p>
+<div class="panel">
+  <h2>الدوام خلال آخر 60 يوماً</h2>
+  <table>
+    <tr><th>التاريخ</th><th>الحالة</th><th>ملاحظة</th><th>سجّله</th></tr>
+    @foreach (var r in Model.Records)
+    { <tr><td>@r.Date.ToString("yyyy-MM-dd")</td><td><span class="chip @Ui.Css(r.Status)">@Ui.Label(r.Status)</span></td><td>@r.Notes</td><td class="muted">@r.RecordedBy</td></tr> }
+  </table>
+  @if (!Model.Records.Any()) { <p class="muted">لا توجد سجلات.</p> }
+</div>
+<div class="panel">
+  <h2>الإجازات</h2>
+  <table>
+    <tr><th>من</th><th>إلى</th><th>النوع</th><th>ملاحظة</th></tr>
+    @foreach (var l in Model.Leaves)
+    { <tr><td>@l.FromDate.ToString("yyyy-MM-dd")</td><td>@l.ToDate.ToString("yyyy-MM-dd")</td><td>@l.Type</td><td>@l.Notes</td></tr> }
+  </table>
+  @if (!Model.Leaves.Any()) { <p class="muted">لا توجد إجازات.</p> }
+</div>

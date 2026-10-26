@@ -1,0 +1,11 @@
+@{ ViewData["Title"] = "تسجيل الدخول"; }
+<div class="login panel">
+  <h1>متابعة موظفي الارتباط</h1>
+  @if (ViewBag.Error != null) { <div class="flash bad">@ViewBag.Error</div> }
+  <form method="post">
+    <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl">
+    <label>اسم المستخدم <input name="username" autocomplete="username" required autofocus></label>
+    <label>كلمة السر <input type="password" name="password" autocomplete="current-password" required></label>
+    <button class="btn">دخول</button>
+  </form>
+</div>

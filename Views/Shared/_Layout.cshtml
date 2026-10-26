@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>@ViewData["Title"] - متابعة موظفي الارتباط</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+@if (User.Identity.IsAuthenticated)
+{
+<header>
+  <b>متابعة موظفي الارتباط</b>
+  <a href="/">لوحة المتابعة</a>
+  <a href="/Attendance/Day">تسجيل الدوام</a>
+  <a href="/Leaves">الإجازات</a>
+  @if (User.IsInRole("Admin"))
+  {
+    <a href="/Admin/Branches">الفروع</a>
+    <a href="/Admin/Import">استيراد الفروع</a>
+    <a href="/Admin/Users">المستخدمون</a>
+  }
+  <span class="sp"></span>
+  <span>@User.Identity.Name</span>
+  <a href="/Account/ChangePassword">كلمة السر</a>
+  <form method="post" action="/Account/Logout" style="display:inline"><button>خروج</button></form>
+</header>
+}
+<main>
+@if (TempData["msg"] != null) { <div class="flash ok">@TempData["msg"]</div> }
+@if (TempData["err"] != null) { <div class="flash bad">@TempData["err"]</div> }
+@RenderBody()
+</main>
+</body>
+</html>

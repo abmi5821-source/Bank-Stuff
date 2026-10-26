@@ -1,0 +1,40 @@
+@model DayVm
+@{ ViewData["Title"] = "تسجيل الدوام"; var i = 0; var d = Model.Date.ToString("yyyy-MM-dd"); }
+<h1>تسجيل الدوام ليوم @d</h1>
+<form method="get" class="filters">
+  <label>التاريخ <input type="date" name="date" value="@d" onchange="this.form.submit()"></label>
+  @if (User.IsInRole("Admin"))
+  {
+    <label>المنطقة
+      <select name="regionId" onchange="this.form.submit()">
+        <option value="">كل المناطق</option>
+        @foreach (var r in Model.Regions) { <option value="@r.Id" selected="@(Model.RegionId == r.Id)">@r.Name</option> }
+      </select>
+    </label>
+  }
+</form>
+<form method="post" action="/Attendance/Save" class="panel">
+  <input type="hidden" name="Date" value="@d">
+  <input type="hidden" name="RegionId" value="@Model.RegionId">
+  <p><button type="button" class="btn alt" onclick="document.querySelectorAll('select.st').forEach(s=>{if(s.value==='0')s.value='1'})">تعيين غير المسجَّلين كحاضرين</button></p>
+  <table>
+    <tr><th>الفرع</th><th>الموظف</th><th>الصفة</th><th>الحالة</th><th>ملاحظة</th></tr>
+    @foreach (var it in Model.Items)
+    {
+      <tr>
+        <td>@it.Branch</td>
+        <td><input type="hidden" name="Rows[@i].EmployeeId" value="@it.EmployeeId">@it.Name</td>
+        <td>@(it.IsPrimary ? "أساسي" : "بديل")</td>
+        <td>
+          <select class="st" name="Rows[@i].Status">
+            @foreach (var s in new[] { DayStatus.Unrecorded, DayStatus.Present, DayStatus.Absent, DayStatus.Leave, DayStatus.Mission })
+            { <option value="@((int)s)" selected="@(it.Status == s)">@Ui.Label(s)</option> }
+          </select>
+        </td>
+        <td><input name="Rows[@i].Notes" value="@it.Notes" maxlength="200"></td>
+      </tr>
+      i++;
+    }
+  </table>
+  @if (!Model.Items.Any()) { <p class="muted">لا يوجد موظفون لعرضهم.</p> } else { <p><button class="btn">حفظ الدوام</button></p> }
+</form>

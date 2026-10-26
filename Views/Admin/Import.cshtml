@@ -1,0 +1,16 @@
+@{ ViewData["Title"] = "استيراد الفروع"; }
+<h1>استيراد الفروع وموظفي الارتباط</h1>
+@if (ViewBag.Ok != null)
+{
+  <div class="flash ok">تمت معالجة @ViewBag.Ok سطراً بنجاح</div>
+  @foreach (var m in (List<string>)ViewBag.Log) { <div class="flash bad">@m</div> }
+}
+<div class="panel">
+  <p>الصق الجدول من Excel (أو أسطراً مفصولة بفاصلة) بالترتيب التالي، سطر لكل فرع:</p>
+  <p><b>المنطقة | الفرع | موظف الارتباط | هاتفه | البديل | هاتفه</b></p>
+  <p class="muted">أسماء المناطق المقبولة: @string.Join(" ، ", ((List<Region>)ViewBag.Regions).Select(r => r.Name)). إعادة الاستيراد لنفس الفرع تحدّث الأسماء ولا تكرر الفرع.</p>
+  <form method="post" class="stack">
+    <textarea name="data" placeholder="المنطقة الجنوبية	فرع البصرة المركزي	اسم الموظف	0770...	اسم البديل	0771..."></textarea>
+    <button class="btn">استيراد</button>
+  </form>
+</div>

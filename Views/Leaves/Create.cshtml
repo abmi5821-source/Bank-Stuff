@@ -1,0 +1,19 @@
+@{ ViewData["Title"] = "تسجيل إجازة"; var t = Ui.Today.ToString("yyyy-MM-dd"); }
+<h1>تسجيل إجازة</h1>
+<div class="panel" style="max-width:520px">
+  @if (ViewBag.Error != null) { <div class="flash bad">@ViewBag.Error</div> }
+  <form method="post" class="stack">
+    <label>الموظف
+      <select name="employeeId" required>
+        @foreach (var o in (List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.Employees) { <option value="@o.Value">@o.Text</option> }
+      </select>
+    </label>
+    <label>من تاريخ <input type="date" name="fromDate" value="@t" required></label>
+    <label>إلى تاريخ <input type="date" name="toDate" value="@t" required></label>
+    <label>النوع
+      <select name="type">@foreach (var x in (string[])ViewBag.Types) { <option>@x</option> }</select>
+    </label>
+    <label>ملاحظة <input name="notes" maxlength="200"></label>
+    <button class="btn">حفظ الإجازة</button>
+  </form>
+</div>

@@ -1,0 +1,28 @@
+@model UsersVm
+@{ ViewData["Title"] = "المستخدمون"; }
+<h1>المستخدمون</h1>
+<div class="panel">
+  <h2>إضافة مستخدم</h2>
+  <form method="post" action="/Admin/CreateUser" class="grid">
+    <label>اسم المستخدم <input name="username" required></label>
+    <label>الاسم الكامل <input name="fullName" required></label>
+    <label>كلمة السر <input name="password" type="password" minlength="8" required></label>
+    <label>الصلاحية <select name="role"><option value="Delegate">مدير مندوبية</option><option value="Admin">مسؤول القسم</option></select></label>
+    <label>المنطقة <select name="regionId"><option value="">—</option>@foreach (var r in Model.Regions) { <option value="@r.Id">@r.Name</option> }</select></label>
+    <button class="btn">إنشاء</button>
+  </form>
+</div>
+<div class="panel">
+  <table>
+    <tr><th>المستخدم</th><th>الاسم</th><th>الصلاحية</th><th>المنطقة</th><th>كلمة سر جديدة</th><th></th></tr>
+    @foreach (var u in Model.Users)
+    {
+      <tr>
+        <td dir="ltr" style="text-align:right">@u.Username</td><td>@u.FullName</td>
+        <td>@(u.Role == "Admin" ? "مسؤول القسم" : "مدير مندوبية")</td><td>@u.Region?.Name</td>
+        <td><form method="post" action="/Admin/ResetPassword/@u.Id" style="display:flex;gap:.4rem"><input type="password" name="password" minlength="8" required><button class="btn alt">تغيير</button></form></td>
+        <td><form method="post" action="/Admin/DeleteUser/@u.Id" onsubmit="return confirm('حذف المستخدم؟')"><button class="btn del">حذف</button></form></td>
+      </tr>
+    }
+  </table>
+</div>
