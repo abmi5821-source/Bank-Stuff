@@ -3,7 +3,7 @@
 <h1>المستخدمون</h1>
 <div class="panel">
   <h2>إضافة مستخدم</h2>
-  <form method="post" action="/Admin/CreateUser" class="grid">
+  <form asp-antiforgery="true" method="post" action="/Admin/CreateUser" class="grid">
     <label>اسم المستخدم <input name="username" required></label>
     <label>الاسم الكامل <input name="fullName" required></label>
     <label>كلمة السر <input name="password" type="password" minlength="8" required></label>
@@ -20,8 +20,8 @@
       <tr>
         <td dir="ltr" style="text-align:right">@u.Username</td><td>@u.FullName</td>
         <td>@(u.Role == "Admin" ? "مسؤول القسم" : "مدير مندوبية")</td><td>@u.Region?.Name</td>
-        <td><form method="post" action="/Admin/ResetPassword/@u.Id" style="display:flex;gap:.4rem"><input type="password" name="password" minlength="8" required><button class="btn alt">تغيير</button></form></td>
-        <td><form method="post" action="/Admin/DeleteUser/@u.Id" onsubmit="return confirm('حذف المستخدم؟')"><button class="btn del">حذف</button></form></td>
+        <td><form asp-antiforgery="true" method="post" action="/Admin/ResetPassword/@u.Id" style="display:flex;gap:.4rem"><input type="password" name="password" minlength="8" required><button class="btn alt">تغيير</button></form></td>
+        <td><form asp-antiforgery="true" method="post" action="/Admin/DeleteUser/@u.Id" onsubmit="return confirm('حذف المستخدم؟')"><button class="btn del">حذف</button></form></td>
       </tr>
     }
   </table>

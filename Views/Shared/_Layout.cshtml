@@ -24,7 +24,7 @@
   <span class="sp"></span>
   <span>@User.Identity.Name</span>
   <a href="/Account/ChangePassword">كلمة السر</a>
-  <form method="post" action="/Account/Logout" style="display:inline"><button>خروج</button></form>
+  <form asp-antiforgery="true" method="post" action="/Account/Logout" style="display:inline"><button>خروج</button></form>
 </header>
 }
 <main>

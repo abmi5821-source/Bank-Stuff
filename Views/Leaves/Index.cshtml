@@ -16,7 +16,7 @@ else
       <td>@l.FromDate.ToString("yyyy-MM-dd")</td>
       <td>@l.ToDate.ToString("yyyy-MM-dd") @if (l.FromDate <= today && l.ToDate >= today) { <span class="chip warn">جارية</span> }</td>
       <td>@l.Type</td><td>@l.Notes</td>
-      <td><form method="post" action="/Leaves/Delete/@l.Id" onsubmit="return confirm('حذف هذه الإجازة؟')"><button class="btn del">حذف</button></form></td>
+      <td><form asp-antiforgery="true" method="post" action="/Leaves/Delete/@l.Id" onsubmit="return confirm('حذف هذه الإجازة؟')"><button class="btn del">حذف</button></form></td>
     </tr>
   }
 </table>

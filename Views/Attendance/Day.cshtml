@@ -13,7 +13,7 @@
     </label>
   }
 </form>
-<form method="post" action="/Attendance/Save" class="panel">
+<form asp-antiforgery="true" method="post" action="/Attendance/Save" class="panel">
   <input type="hidden" name="Date" value="@d">
   <input type="hidden" name="RegionId" value="@Model.RegionId">
   <p><button type="button" class="btn alt" onclick="document.querySelectorAll('select.st').forEach(s=>{if(s.value==='0')s.value='1'})">تعيين غير المسجَّلين كحاضرين</button></p>
