@@ -1,0 +1,10 @@
+@model Employee
+@{ ViewData["Title"] = "تعديل موظف"; }
+<h1>تعديل @(Model.IsPrimary ? "موظف الارتباط" : "البديل") — @Model.Branch.Name</h1>
+<div class="panel" style="max-width:460px">
+  <form method="post" class="stack">
+    <label>الاسم <input name="fullName" value="@Model.FullName" required></label>
+    <label>الهاتف <input name="phone" value="@Model.Phone"></label>
+    <button class="btn">حفظ</button>
+  </form>
+</div>

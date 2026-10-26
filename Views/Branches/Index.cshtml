@@ -1,0 +1,55 @@
+@model List<Branch>
+@{
+  ViewData["Title"] = "الفروع والموظفون";
+  var admin = User.IsInRole("Admin");
+  void Slot(Branch b, bool primary)
+  {
+    var e = b.Employees.FirstOrDefault(x => x.IsPrimary == primary);
+    if (e != null)
+    {
+      <div>@e.FullName</div>
+      <div class="muted" dir="ltr" style="text-align:right">@e.Phone</div>
+      <div class="row">
+        <a href="/Branches/Edit/@e.Id">تعديل</a>
+        <form asp-antiforgery="true" method="post" action="/Branches/Delete/@e.Id" onsubmit="return confirm('حذف هذا الموظف من الفرع؟')"><button class="btn del">حذف</button></form>
+      </div>
+    }
+    else
+    {
+      <form asp-antiforgery="true" method="post" action="/Branches/AddEmployee" class="stack">
+        <input type="hidden" name="branchId" value="@b.Id">
+        <input type="hidden" name="isPrimary" value="@(primary ? "true" : "false")">
+        <input name="fullName" placeholder="الاسم" required>
+        <input name="phone" placeholder="الهاتف">
+        <button class="btn alt">إضافة</button>
+      </form>
+    }
+  }
+}
+<h1>الفروع والموظفون (@Model.Count)</h1>
+@if (admin)
+{
+  <form asp-antiforgery="true" method="post" action="/Branches/AddBranch" class="panel grid">
+    <label>اسم الفرع الجديد <input name="name" required></label>
+    <label>المنطقة <select name="regionId">@foreach (var r in (List<Region>)ViewBag.Regions) { <option value="@r.Id">@r.Name</option> }</select></label>
+    <button class="btn">إضافة فرع</button>
+  </form>
+}
+<div class="panel">
+@if (!Model.Any()) { <p class="muted">لا توجد فروع في نطاقك بعد.</p> }
+else
+{
+<table>
+  <tr><th>المنطقة</th><th>الفرع</th><th>موظف الارتباط</th><th>البديل</th>@if (admin) { <th></th> }</tr>
+  @foreach (var b in Model)
+  {
+    <tr>
+      <td>@b.Region.Name</td><td>@b.Name</td>
+      <td>@{ Slot(b, true); }</td>
+      <td>@{ Slot(b, false); }</td>
+      @if (admin) { <td><form asp-antiforgery="true" method="post" action="/Branches/DeleteBranch/@b.Id" onsubmit="return confirm('حذف الفرع وكل سجلاته نهائياً؟')"><button class="btn del">حذف الفرع</button></form></td> }
+    </tr>
+  }
+</table>
+}
+</div>

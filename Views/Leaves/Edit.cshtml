@@ -1,0 +1,14 @@
+@using BankLiaison.Controllers
+@model LeaveRecord
+@{ ViewData["Title"] = "تعديل إجازة"; }
+<h1>تعديل إجازة — @Model.Employee.FullName</h1>
+<div class="panel" style="max-width:520px">
+  @if (ViewBag.Error != null) { <div class="flash bad">@ViewBag.Error</div> }
+  <form method="post" class="stack">
+    <label>من تاريخ <input type="date" name="fromDate" value="@Model.FromDate.ToString("yyyy-MM-dd")" required></label>
+    <label>إلى تاريخ <input type="date" name="toDate" value="@Model.ToDate.ToString("yyyy-MM-dd")" required></label>
+    <label>النوع <select name="type">@foreach (var x in LeavesController.Types) { <option selected="@(x == Model.Type)">@x</option> }</select></label>
+    <label>ملاحظة <input name="notes" value="@Model.Notes" maxlength="200"></label>
+    <button class="btn">حفظ التعديل</button>
+  </form>
+</div>

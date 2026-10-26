@@ -1,0 +1,42 @@
+@model ReportVm
+@{
+  ViewData["Title"] = "تقرير " + Model.Employee.FullName;
+  var names = new[] { "حاضر", "غائب", "إجازة", "مهمة رسمية", "لم يُسجَّل" };
+  string Url(string p, DateOnly d) => $"/Reports/Employee/{Model.Employee.Id}?period={p}&date={d:yyyy-MM-dd}";
+  var periods = new[] { ("week", "أسبوع"), ("month", "شهر"), ("season", "فصل"), ("year", "سنة") };
+}
+<h1>@Model.Employee.FullName</h1>
+<p class="muted">@Model.Employee.Branch.Name — @Model.Employee.Branch.Region.Name — @(Model.Employee.IsPrimary ? "موظف الارتباط" : "البديل") — <a href="/Reports">كل الموظفين</a></p>
+<div class="tabs">
+  @foreach (var (p, label) in periods) { <a class="@(Model.Period == p ? "on" : "")" href="@Url(p, Model.Date)">@label</a> }
+</div>
+<div class="row" style="margin-bottom:1rem">
+  <a class="btn alt" href="@Url(Model.Period, Model.Prev)">السابق</a>
+  <strong>@Model.Title (@Model.From.ToString("yyyy-MM-dd") إلى @Model.To.ToString("yyyy-MM-dd"))</strong>
+  <a class="btn alt" href="@Url(Model.Period, Model.Next)">التالي</a>
+</div>
+<div class="strip">
+  <div class="ok"><strong>@Model.Rate%</strong>نسبة الحضور من الأيام المسجلة</div>
+  <div class="ok"><strong>@Model.Totals[0]</strong>حاضر</div>
+  <div class="bad"><strong>@Model.Totals[1]</strong>غائب</div>
+  <div class="warn"><strong>@Model.Totals[2]</strong>إجازة</div>
+  <div class="info"><strong>@Model.Totals[3]</strong>مهمة رسمية</div>
+  <div class="none"><strong>@Model.Totals[4]</strong>لم يُسجَّل</div>
+</div>
+<div class="panel">
+  @if (!Model.Labels.Any()) { <p class="muted">هذه الفترة لم تبدأ بعد.</p> }
+  else { <div class="chartbox"><canvas id="c"></canvas></div> }
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+  const labels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Labels));
+  const series = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Series));
+  const names = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(names));
+  const colors = ['#1f7a4d', '#a3262a', '#c98a00', '#1d4f8c', '#9aa3ab'];
+  const el = document.getElementById('c');
+  if (el) new Chart(el, {
+    type: 'line',
+    data: { labels, datasets: series.map((d, i) => ({ label: names[i], data: d, borderColor: colors[i], backgroundColor: colors[i], tension: .25, pointRadius: labels.length > 40 ? 0 : 3 })) },
+    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }, plugins: { legend: { rtl: true } } }
+  });
+</script>

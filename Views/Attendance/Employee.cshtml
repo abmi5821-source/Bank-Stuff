@@ -2,6 +2,7 @@
 @{ ViewData["Title"] = Model.Employee.FullName; }
 <h1>@Model.Employee.FullName</h1>
 <p class="muted">@Model.Employee.Branch.Name — @Model.Employee.Branch.Region.Name — @(Model.Employee.IsPrimary ? "موظف الارتباط" : "البديل")</p>
+@if (User.IsInRole("Admin")) { <p><a class="btn" href="/Reports/Employee/@Model.Employee.Id">عرض الرسم البياني</a></p> }
 <div class="panel">
   <h2>الدوام خلال آخر 60 يوماً</h2>
   <table>

@@ -30,3 +30,6 @@ input,select,textarea{font:inherit;padding:.4rem .5rem;border:1px solid #c5ccd2;
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.8rem;align-items:end}
 textarea{width:100%;min-height:200px;direction:rtl;font-family:inherit}
 a{color:var(--accent)}
+.row{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+.tabs{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1rem}.tabs a{padding:.3rem .9rem;border:1px solid var(--accent);border-radius:999px;text-decoration:none}.tabs a.on{background:var(--accent);color:#fff}
+.chartbox{position:relative;height:340px}

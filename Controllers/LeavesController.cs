@@ -38,6 +38,28 @@ public class LeavesController : BaseController
         return RedirectToAction(nameof(Index));
     }
 
+    [HttpGet]
+    public async Task<IActionResult> Edit(int id)
+    {
+        var l = await Db.Leaves.Include(x => x.Employee).ThenInclude(e => e.Branch).FirstOrDefaultAsync(x => x.Id == id);
+        if (l == null) return NotFound();
+        if (!IsAdmin && l.Employee.Branch.RegionId != MyRegionId) return Forbid();
+        return View(l);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Edit(int id, DateOnly fromDate, DateOnly toDate, string type, string notes)
+    {
+        var l = await Db.Leaves.Include(x => x.Employee).ThenInclude(e => e.Branch).FirstOrDefaultAsync(x => x.Id == id);
+        if (l == null) return NotFound();
+        if (!IsAdmin && l.Employee.Branch.RegionId != MyRegionId) return Forbid();
+        if (toDate < fromDate) { ViewBag.Error = "تاريخ النهاية يجب ألا يسبق تاريخ البداية"; return View(l); }
+        l.FromDate = fromDate; l.ToDate = toDate; l.Type = type; l.Notes = notes?.Trim();
+        await Db.SaveChangesAsync();
+        TempData["msg"] = "تم تعديل الإجازة";
+        return RedirectToAction(nameof(Index));
+    }
+
     [HttpPost]
     public async Task<IActionResult> Delete(int id)
     {

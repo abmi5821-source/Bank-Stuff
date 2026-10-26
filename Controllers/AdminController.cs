@@ -60,8 +60,7 @@ public class AdminController : BaseController
         return RedirectToAction(nameof(Users));
     }
 
-    public async Task<IActionResult> Branches() =>
-        View(await Db.Branches.Include(b => b.Region).Include(b => b.Employees.Where(e => e.IsActive)).OrderBy(b => b.Region.Name).ThenBy(b => b.Name).ToListAsync());
+    public IActionResult Branches() => RedirectToAction("Index", "Branches");
 
     [HttpGet] public async Task<IActionResult> Import() { ViewBag.Regions = await Db.Regions.OrderBy(r => r.Name).ToListAsync(); return View(); }
 
